@@ -1,0 +1,12 @@
+body {
+    background-color: var(--bs-gray-900);
+}
+
+h1 {
+    color: var(--bs-white);
+}
+
+#textarea-1 {
+    color: var(--bs-white);
+    background-color: var(--bs-gray-900);
+}
