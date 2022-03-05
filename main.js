@@ -3,21 +3,24 @@ var app = app || {};
 
 class Main {
     constructor() {
-        this.textarea = document.getElementById("textarea-1");
+        this.titleInput = document.querySelectorAll('.note-title');
+        this.textarea = document.getElementById("note-body");
 
-        //temp
-        this.storageObj = JSON.parse(localStorage.getItem('obj')) || {};
+        this.note = new Note();
+        this.storageObj = JSON.parse(localStorage.getItem('obj'));
+        if (this.storageObj && Object.keys(this.storageObj).length !== 0) {
+            this.note.load(this.storageObj);
+        }
 
         this.loadData();
         this.saveData();
         this.textareaTab();
+        this.darkMode();
     }
 
     loadData() {
-        this.textarea.value = localStorage.getItem('data');
-
-        //temp
-        console.log(this.storageObj);
+        this.titleInput[0].value = this.note.title;
+        this.textarea.value = this.note.data;
     }
 
     saveData() {
@@ -25,9 +28,18 @@ class Main {
 
         var saveIntervalID = setInterval(saveCallback, 5000);
 
+        self.titleInput[0].addEventListener('focusout', function () {
+            saveCallback();
+        });
+
+        self.textarea.addEventListener('focusout', function () {
+            saveCallback();
+        });
+
         function saveCallback() {
-            var text = self.textarea.value;
-            localStorage.setItem('data', text);
+            self.note.title = self.titleInput[0].value;
+            self.note.data = self.textarea.value;
+            localStorage.setItem('obj', JSON.stringify(self.note));
         }
     }
 
@@ -39,11 +51,68 @@ class Main {
                 var end = this.selectionEnd;
 
                 // set textarea value to: text before caret + tab + text after caret
-                this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+                this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
 
                 // put caret at right position again
                 this.selectionStart = this.selectionEnd = start + 1;
             }
         });
+    }
+
+    darkMode() {
+        var self = this;
+
+        var body = document.body;
+        var navbar = document.getElementsByTagName('nav');
+        var darkModeDiv = document.getElementById('dark-mode');
+        var darkModeSwitch = document.getElementById('darkmode-switch');
+
+        var darkModeState = localStorage.getItem('dark-mode');
+        if(darkModeState) {
+            switch (darkModeState) {
+                case 'light':
+                    darkModeSwitch.checked = false;
+                    darkModeOff();
+                    break;
+                
+                case 'dark':
+                    darkModeSwitch.checked = true;
+                    darkModeOn();
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        
+        darkModeSwitch.addEventListener('change', function () {
+            if (darkModeSwitch.checked) {
+                darkModeOn();
+            } else {
+                darkModeOff();
+            }
+        });
+
+        function darkModeOff() {
+            body.classList.remove('bg-dark');
+            navbar[0].classList.remove('navbar-dark', 'bg-dark');
+            self.textarea.classList.remove('bg-dark', 'text-white');
+            self.titleInput[0].classList.remove('bg-dark', 'text-white');
+            darkModeDiv.classList.remove('text-white');
+            darkModeSave('light');
+        }
+
+        function darkModeOn() {
+            body.classList.add('bg-dark');
+            navbar[0].classList.add('navbar-dark', 'bg-dark');
+            self.textarea.classList.add('bg-dark', 'text-white');
+            self.titleInput[0].classList.add('bg-dark', 'text-white');
+            darkModeDiv.classList.add('text-white');
+            darkModeSave('dark');
+        }
+
+        function darkModeSave(state) {
+            localStorage.setItem('dark-mode', state);
+        }
     }
 }
