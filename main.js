@@ -79,9 +79,8 @@ class Main {
     darkMode() {
         var self = this;
 
-        var body = document.body;
-        var navbar = document.getElementsByTagName('nav');
-        var darkModeDiv = document.getElementById('dark-mode');
+        const htmlElement = document.getElementsByTagName('html')[0];
+
         var darkModeSwitch = document.getElementById('darkmode-switch');
 
         var darkModeState = localStorage.getItem('dark-mode');
@@ -111,20 +110,12 @@ class Main {
         });
 
         function darkModeOff() {
-            body.classList.remove('bg-dark');
-            navbar[0].classList.remove('navbar-dark', 'bg-dark');
-            self.textarea.classList.remove('bg-dark', 'text-white');
-            self.titleInput[0].classList.remove('bg-dark', 'text-white');
-            darkModeDiv.classList.remove('text-white');
+            htmlElement.setAttribute('data-bs-theme', 'light');
             darkModeSave('light');
         }
 
         function darkModeOn() {
-            body.classList.add('bg-dark');
-            navbar[0].classList.add('navbar-dark', 'bg-dark');
-            self.textarea.classList.add('bg-dark', 'text-white');
-            self.titleInput[0].classList.add('bg-dark', 'text-white');
-            darkModeDiv.classList.add('text-white');
+            htmlElement.setAttribute('data-bs-theme', 'dark');
             darkModeSave('dark');
         }
 
