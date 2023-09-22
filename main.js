@@ -14,6 +14,7 @@ class Main {
 
         this.loadData();
         this.saveData();
+        this.clear();
         this.textareaTab();
         this.darkMode();
     }
@@ -41,6 +42,22 @@ class Main {
             self.note.data = self.textarea.value;
             localStorage.setItem('obj', JSON.stringify(self.note));
         }
+    }
+
+    clear() {
+        var self = this;
+
+        var clearButton = document.getElementById('clear');
+        
+        clearButton.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            if (window.confirm('Are you sure?')) {
+                self.note.clear();
+                self.loadData();
+                localStorage.setItem('obj', JSON.stringify(self.note));
+            }
+        });
     }
 
     textareaTab() {
